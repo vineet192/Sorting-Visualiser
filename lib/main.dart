@@ -2,10 +2,17 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sorting_visualiser/sorting_canvas.dart';
 
-void main() => runApp(HomePage());
+void main() {
+  //Locks the orientation of the device to portrait mode
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(HomePage());
+  });
+}
 
 class HomePage extends StatefulWidget {
   @override
