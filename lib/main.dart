@@ -34,80 +34,80 @@ class HomePageState extends State<HomePage> {
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 10, 0.0),
-              child: DropdownButton<String>(
-                icon: Icon(
-                  Icons.arrow_drop_down_circle,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onChanged: (dynamic choice) async {
-                  if (isAlgorithmRunning) {
-                    return null;
-                  }
-                  List<int> sorted = List.from(arr);
-                  sorted.sort();
-                  if (listEquals(arr, sorted)) {
-                    _showCenterToast("It is already sorted !");
-                    return;
-                  }
+              child: IgnorePointer(
+                ignoring: isAlgorithmRunning,
+                child: DropdownButton<String>(
+                  icon: Icon(
+                    Icons.arrow_drop_down_circle,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  onChanged: (dynamic choice) async {
+                    List<int> sorted = List.from(arr);
+                    sorted.sort();
+                    if (listEquals(arr, sorted)) {
+                      _showCenterToast("It is already sorted !");
+                      return;
+                    }
 
-                  switch (choice) {
-                    case 'Bubble Sort':
-                      _setAlgorithmRunningState(true);
-                      await _bubbleSortVisualiser();
-                      _setAlgorithmRunningState(false);
-                      _showCenterToast('Bubble Sort completed');
-                      break;
-                    case 'Selection Sort':
-                      _setAlgorithmRunningState(true);
-                      await _selectionSortVisualiser();
-                      _setAlgorithmRunningState(false);
-                      _showCenterToast('Selection Sort completed');
-                      break;
-                    case 'Insertion Sort':
-                      _setAlgorithmRunningState(true);
-                      await _insertionSortVisualiser();
-                      _setAlgorithmRunningState(false);
-                      _showCenterToast("Insertion Sort completed");
+                    switch (choice) {
+                      case 'Bubble Sort':
+                        _setAlgorithmRunningState(true);
+                        await _bubbleSortVisualiser();
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast('Bubble Sort completed');
+                        break;
+                      case 'Selection Sort':
+                        _setAlgorithmRunningState(true);
+                        await _selectionSortVisualiser();
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast('Selection Sort completed');
+                        break;
+                      case 'Insertion Sort':
+                        _setAlgorithmRunningState(true);
+                        await _insertionSortVisualiser();
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast("Insertion Sort completed");
 
-                      break;
-                    case 'Quick Sort':
-                      _setAlgorithmRunningState(true);
-                      await _quickSortVisualiser(arr, 0, arr.length - 1);
-                      _setAlgorithmRunningState(false);
-                      _showCenterToast("Quick Sort completed");
-                      break;
-                  }
-                },
-                hint: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Text(
-                      "Algorithm",
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                          fontSize: 24),
+                        break;
+                      case 'Quick Sort':
+                        _setAlgorithmRunningState(true);
+                        await _quickSortVisualiser(arr, 0, arr.length - 1);
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast("Quick Sort completed");
+                        break;
+                    }
+                  },
+                  hint: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "Algorithm",
+                        style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            fontSize: 24),
+                      ),
                     ),
                   ),
+                  items: <String>[
+                    'Bubble Sort',
+                    'Selection Sort',
+                    'Insertion Sort',
+                    'Quick Sort'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                            color: Colors.blue, fontWeight: FontWeight.w500),
+                      ),
+                    );
+                  }).toList(),
+                  iconSize: 40,
                 ),
-                items: <String>[
-                  'Bubble Sort',
-                  'Selection Sort',
-                  'Insertion Sort',
-                  'Quick Sort'
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.w500),
-                    ),
-                  );
-                }).toList(),
-                iconSize: 40,
               ),
             )
           ],
