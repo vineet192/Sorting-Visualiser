@@ -5,15 +5,7 @@ The user can select sorting algorithms like Bubble sort, Selection sort, Inserti
 
 # Screens
 
-<h2>Bubble Sort</h2>
-<img src = "Screens/Bubble.gif" width = 300 height = 700>
-<br>
-<h2>Selection Sort</h2>
-<img src = "Screens/Selection.gif" width = 300 height = 700>
-<br>
-<h2>Insertion Sort</h2>
-<img src = "Screens/Insertion.gif" width = 300 height = 700>
-<br>
-<h2>Quick Sort</h2>
-<img src = "Screens/Quick.gif" width = 300 height = 700>
+
+ <img src = "Screens/Bubble.gif" width = 200 height = 500> <img src = "Screens/Selection.gif" width = 200 height = 500> <img src = "Screens/Insertion.gif" width = 200 height = 500> <img src = "Screens/Quick.gif" width = 200 height = 500> 
+
 
