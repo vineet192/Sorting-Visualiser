@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sorting_visualiser/sorting_canvas.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   //Locks the orientation of the device to portrait mode
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
@@ -83,26 +84,30 @@ class HomePageState extends State<HomePage> {
                         _setAlgorithmRunningState(false);
                         _showCenterToast("Quick Sort completed");
                         break;
+                      case 'Merge Sort':
+                        _setAlgorithmRunningState(true);
+                        await _mergeSortVisualiser(arr, 0, arr.length - 1);
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast("Merge Sort completed");
+                        break;
                     }
                   },
-                  hint: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        "Algorithm",
-                        style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            fontSize: 24),
-                      ),
+                  hint: Center(
+                    child: Text(
+                      "Algorithm",
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontSize: 25),
                     ),
                   ),
                   items: <String>[
                     'Bubble Sort',
                     'Selection Sort',
                     'Insertion Sort',
-                    'Quick Sort'
+                    'Quick Sort',
+                    'Merge Sort',
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -185,7 +190,6 @@ class HomePageState extends State<HomePage> {
           await Future.delayed(const Duration(microseconds: 500), () {
             setState(() {
               arr = List.from(bubbleArr);
-              print("Updated to : $arr");
             });
           });
         }
@@ -214,7 +218,6 @@ class HomePageState extends State<HomePage> {
       await Future.delayed(const Duration(milliseconds: 50), () {
         setState(() {
           arr = List.from(selectArr);
-          print("Updated to : $arr");
         });
       });
     }
@@ -238,7 +241,6 @@ class HomePageState extends State<HomePage> {
       await Future.delayed(const Duration(milliseconds: 80), () {
         setState(() {
           arr = List.from(insertArr);
-          print("Updated to : $arr");
         });
       });
     }
@@ -248,7 +250,6 @@ class HomePageState extends State<HomePage> {
   _quickSortVisualiser(List<int> quickArr, int low, int high) async {
     print('Quick sort visualiser called');
     int pivot;
-    List<int> quickArr = List.from(arr);
     if (low < high) {
       /* pi is partitioning index, arr[pi] is now
            at right place */
@@ -279,12 +280,68 @@ class HomePageState extends State<HomePage> {
     return (i + 1);
   }
 
+  _mergeSortVisualiser(List<int> mergeArr, int low, int high) async {
+    print('Merge Sort called');
+    print('Array size is : "${mergeArr.length}"');
+    if (low < high) {
+      // Same as (l+r)/2, but avoids overflow for
+      // large l and h
+      int mid = (low + (high - low) / 2).toInt();
+      // Sort first and second halves
+      await _mergeSortVisualiser(mergeArr, low, mid);
+      await _mergeSortVisualiser(mergeArr, mid + 1, high);
+      _updateArrayWithDelay(mergeArr);
+      await merge(mergeArr, low, mid, high);
+    }
+  }
+
+  merge(List<int> mergeArr, int low, int mid, int high) async {
+    int i, j, k;
+    int n1 = mid - low + 1;
+    int n2 = high - mid;
+
+    /* create temp arrays */
+    List<int> L = [], R = [];
+
+    /* Copy data to temp arrays L[] and R[] */
+    for (i = 0; i < n1; i++)
+      L.add(mergeArr[low + i]); //L[i] = mergeArr[low + i];
+    for (j = 0; j < n2; j++)
+      R.add(mergeArr[mid + 1 + j]); //R[j] = mergeArr[mid + 1 + j];
+
+    i = 0;
+    j = 0;
+    k = low;
+    while (i < n1 && j < n2) {
+      if (L[i] <= R[j]) {
+        mergeArr[k] = L[i];
+        i++;
+      } else {
+        mergeArr[k] = R[j];
+        j++;
+      }
+      await _updateArrayWithDelay(mergeArr);
+      k++;
+    }
+
+    while (i < n1) {
+      mergeArr[k] = L[i];
+      i++;
+      k++;
+    }
+
+    while (j < n2) {
+      mergeArr[k] = R[j];
+      j++;
+      k++;
+    }
+  }
+
   //async update method for recursive sorting algorithms
   _updateArrayWithDelay(List<int> updatedArr) async {
     await Future.delayed(const Duration(milliseconds: 1), () {
       setState(() {
         arr = List.from(updatedArr);
-        print("Updated to : $arr");
       });
     });
   }
