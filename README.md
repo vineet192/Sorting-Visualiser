@@ -1,8 +1,8 @@
 # Sorting Visualiser
 <p>This is a simple sorting visualisation app built using the flutter framework.
 The user can select sorting algorithms like Bubble sort, Selection sort, Insertion sort, Quick sort etc. to be visualised using an array of vertically drawn lines on the screen.</p>
-<p>Currently 5 sorting algorithms namely bubble sort, selection sort, Insertion sort, quick sort and merge sort have been implemented 
-<p>Steps to run :</p>
+<p>Currently 5 sorting algorithms namely bubble sort, selection sort, Insertion sort, quick sort and merge sort have been implemented. </p>
+ # Steps to run 
 <li> Install <a href = "https://git-scm.com/downloads">Git</a> and the <a href = "https://flutter.dev/docs/get-started/install"> Flutter sdk</a>.
 <li> Copy the url provided in the clone or download button above. 
 <li> Navigate to a directory of your choice and run 'git clone THE_COPIED URL'.
