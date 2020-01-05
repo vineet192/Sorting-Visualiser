@@ -90,6 +90,18 @@ class HomePageState extends State<HomePage> {
                         _setAlgorithmRunningState(false);
                         _showCenterToast("Merge Sort completed");
                         break;
+                      case 'Heap Sort':
+                        _setAlgorithmRunningState(true);
+                        await _heapSortVisualiser(arr);
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast("Heap Sort completed");
+                        break;
+                      case 'Gnome Sort':
+                        _setAlgorithmRunningState(true);
+                        await _gnomeSortVisualiser();
+                        _setAlgorithmRunningState(false);
+                        _showCenterToast("Gnome Sort completed");
+                        break;
                     }
                   },
                   hint: Center(
@@ -108,6 +120,8 @@ class HomePageState extends State<HomePage> {
                     'Insertion Sort',
                     'Quick Sort',
                     'Merge Sort',
+                    'Heap Sort',
+                    'Gnome Sort'
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -238,7 +252,7 @@ class HomePageState extends State<HomePage> {
         j = j - 1;
       }
       insertArr[j + 1] = key;
-      await Future.delayed(const Duration(milliseconds: 80), () {
+      await Future.delayed(const Duration(milliseconds: 50), () {
         setState(() {
           arr = List.from(insertArr);
         });
@@ -260,6 +274,7 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  //helper function to partition array for quicksort
   Future<int> _partition(List<int> quickArr, int low, int high) async {
     int pivot = quickArr[high];
     int i = (low - 1);
@@ -280,6 +295,7 @@ class HomePageState extends State<HomePage> {
     return (i + 1);
   }
 
+  //function to sort the list using MERGE SORT and repaint the canvas at every iteration.
   _mergeSortVisualiser(List<int> mergeArr, int low, int high) async {
     print('Merge Sort called');
     print('Array size is : "${mergeArr.length}"');
@@ -295,6 +311,7 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  //helper function to merge the array for merge sort
   merge(List<int> mergeArr, int low, int mid, int high) async {
     int i, j, k;
     int n1 = mid - low + 1;
@@ -337,7 +354,71 @@ class HomePageState extends State<HomePage> {
     }
   }
 
-  //async update method for recursive sorting algorithms
+  //function to sort the list using HEAP SORT and repaint the canvas at every iteration.
+  _heapSortVisualiser(List<int> heapArr) async {
+    int n = heapArr.length;
+
+    // Build heap (rearrange array)
+    for (int i = n ~/ 2 - 1; i >= 0; i--) await heapify(heapArr, n, i);
+
+    // One by one extract an element from heap
+    for (int i = n - 1; i >= 0; i--) {
+      // Move current root to end
+      int temp = heapArr[0];
+      heapArr[0] = heapArr[i];
+      heapArr[i] = temp;
+      await _updateArrayWithDelay(heapArr);
+      // call max heapify on the reduced heap
+      await heapify(heapArr, i, 0);
+    }
+  }
+
+  heapify(List<int> heapArr, int n, int i) async {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+
+    // If left child is larger than root
+    if (l < n && heapArr[l] > heapArr[largest]) largest = l;
+
+    // If right child is larger than largest so far
+    if (r < n && heapArr[r] > heapArr[largest]) largest = r;
+    // If largest is not root
+    if (largest != i) {
+      int swap = heapArr[i];
+      heapArr[i] = heapArr[largest];
+      heapArr[largest] = swap;
+      await _updateArrayWithDelay(heapArr);
+      // Recursively heapify the affected sub-tree
+      await heapify(heapArr, n, largest);
+    }
+  }
+
+  ////function to sort the list using GNOME SORT and repaint the canvas at every iteration.
+  _gnomeSortVisualiser() async {
+    List<int> gnomeArr = List.from(arr);
+    int index = 0;
+
+    while (index < gnomeArr.length) {
+      if (index == 0) index++;
+      if (gnomeArr[index] >= gnomeArr[index - 1])
+        index++;
+      else {
+        int temp;
+        temp = gnomeArr[index];
+        gnomeArr[index] = gnomeArr[index - 1];
+        gnomeArr[index - 1] = temp;
+        await Future.delayed(const Duration(microseconds: 800), () {
+          setState(() {
+            arr = List.from(gnomeArr);
+          });
+        });
+        index--;
+      }
+    }
+  }
+
+  //async update method to keep the body of recursive algorithms cleaner.
   _updateArrayWithDelay(List<int> updatedArr) async {
     await Future.delayed(const Duration(milliseconds: 1), () {
       setState(() {
@@ -352,7 +433,7 @@ class HomePageState extends State<HomePage> {
     });
   }
 
-  //Helper function to get a list of 15 random integers
+  //Helper function to get a list of random integers whose number depends on the physical width of working window.
   List<int> _getRandomIntegerList() {
     List<int> arr = [];
     double width = window.physicalSize.height - 800;
@@ -364,6 +445,7 @@ class HomePageState extends State<HomePage> {
   }
 }
 
+//helper function to display a toast in the center of the screen
 _showCenterToast(String msg) {
   Fluttertoast.showToast(
     msg: msg,
