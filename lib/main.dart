@@ -24,12 +24,14 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   List<int> arr;
-  double width;
+  //List that contains indexes where the lines should be painted green.
+  List<int> greenIndexes;
   bool isAlgorithmRunning;
   @override
   void initState() {
     super.initState();
     arr = _getRandomIntegerList();
+    greenIndexes = [];
     isAlgorithmRunning = false;
   }
 
@@ -57,7 +59,7 @@ class HomePageState extends State<HomePage> {
                       _showCenterToast("It is already sorted !");
                       return;
                     }
-
+                    greenIndexes.clear();
                     switch (choice) {
                       case 'Bubble Sort':
                         _setAlgorithmRunningState(true);
@@ -149,6 +151,16 @@ class HomePageState extends State<HomePage> {
               FloatingActionButton(
                 backgroundColor: Colors.blue,
                 onPressed: () {
+                  if (isAlgorithmRunning) {
+                    Fluttertoast.showToast(
+                        msg: "Algorithm is running !",
+                        gravity: ToastGravity.CENTER,
+                        backgroundColor: Colors.blueAccent,
+                        textColor: Colors.white,
+                        toastLength: Toast.LENGTH_SHORT);
+                    return;
+                  }
+                  _resetColors();
                   setState(() {
                     arr = _getRandomIntegerList();
                   });
@@ -179,7 +191,7 @@ class HomePageState extends State<HomePage> {
               willChange: true,
               isComplex: true,
               size: Size(window.physicalSize.width, double.infinity),
-              painter: SortingCanvas(arr),
+              painter: SortingCanvas(arr, greenIndexes),
             ),
           ),
         ),
@@ -208,6 +220,11 @@ class HomePageState extends State<HomePage> {
           });
         }
       }
+      await Future.delayed(const Duration(microseconds: 500), () {
+        setState(() {
+          greenIndexes.add(bubbleArr.length - 1 - i);
+        });
+      });
     }
   }
 
@@ -215,23 +232,24 @@ class HomePageState extends State<HomePage> {
   _selectionSortVisualiser() async {
     print('Selection sort visualiser called');
     List<int> selectArr = List.from(arr);
-    int min_index, temp;
+    int minIndex, temp;
 
     for (int i = 0; i < selectArr.length - 1; i++) {
-      min_index = i;
+      minIndex = i;
       for (int j = i + 1; j < selectArr.length; j++) {
-        if (selectArr[j] < selectArr[min_index]) {
-          min_index = j;
+        if (selectArr[j] < selectArr[minIndex]) {
+          minIndex = j;
         }
       }
 
       temp = selectArr[i];
-      selectArr[i] = selectArr[min_index];
-      selectArr[min_index] = temp;
+      selectArr[i] = selectArr[minIndex];
+      selectArr[minIndex] = temp;
 
       await Future.delayed(const Duration(milliseconds: 50), () {
         setState(() {
           arr = List.from(selectArr);
+          greenIndexes.add(i);
         });
       });
     }
@@ -255,6 +273,7 @@ class HomePageState extends State<HomePage> {
       await Future.delayed(const Duration(milliseconds: 50), () {
         setState(() {
           arr = List.from(insertArr);
+          greenIndexes.add(i);
         });
       });
     }
@@ -436,12 +455,15 @@ class HomePageState extends State<HomePage> {
   //Helper function to get a list of random integers whose number depends on the physical width of working window.
   List<int> _getRandomIntegerList() {
     List<int> arr = [];
-    double width = window.physicalSize.height - 800;
     Random rng = new Random();
     for (int i = 0; i < window.physicalSize.width / 2 - 150; i++) {
       arr.add(rng.nextInt(400) + 1);
     }
     return arr;
+  }
+
+  void _resetColors() {
+    greenIndexes.clear();
   }
 }
 
